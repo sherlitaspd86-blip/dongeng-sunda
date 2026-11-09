@@ -164,4 +164,526 @@
         </section>
 
         <!-- 4. HALAMAN AKHIR / REKAPITULASI -->
-        <section id="pageResult" class="hidden glass-card rounded-3xl p-6 md:p-10 text-center my-4 flex-col items
+        <section id="pageResult" class="hidden glass-card rounded-3xl p-6 md:p-10 text-center my-4 flex-col items-center gap-6 shadow-2xl">
+            <div class="text-6xl animate-bounce">🏆</div>
+            <div>
+                <span class="text-xs font-bold text-yellow-400 uppercase tracking-widest">HASIL PETUALANGAN</span>
+                <h2 id="resultPlayerName" class="font-game text-3xl md:text-4xl text-white mt-1"></h2>
+            </div>
+
+            <!-- BADGE GELAR -->
+            <div class="bg-gradient-to-r from-yellow-500/20 via-amber-500/20 to-orange-500/20 border-2 border-yellow-500/40 rounded-2xl p-4 w-full max-w-md">
+                <span class="text-xs text-slate-400 uppercase block mb-1">Gelar Anu Dipeunangkeun:</span>
+                <h3 id="resultTitle" class="font-game text-2xl text-yellow-300"></h3>
+            </div>
+
+            <!-- STATISTIK -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 w-full max-w-lg">
+                <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700">
+                    <span class="text-[10px] text-slate-400 block uppercase">Total Skor</span>
+                    <span id="resScore" class="font-game text-2xl text-emerald-400"></span>
+                </div>
+                <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700">
+                    <span class="text-[10px] text-slate-400 block uppercase">Jawaban Leres</span>
+                    <span id="resCorrect" class="font-game text-2xl text-blue-400"></span>
+                </div>
+                <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700">
+                    <span class="text-[10px] text-slate-400 block uppercase">Jawaban Salah</span>
+                    <span id="resWrong" class="font-game text-2xl text-rose-400"></span>
+                </div>
+                <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-700">
+                    <span class="text-[10px] text-slate-400 block uppercase">Persentase</span>
+                    <span id="resPercent" class="font-game text-2xl text-yellow-400"></span>
+                </div>
+            </div>
+
+            <!-- ACTION BUTTONS -->
+            <div class="flex flex-col sm:flex-row gap-3 w-full max-w-md mt-2">
+                <button onclick="restartGame()" class="btn-bounce bg-yellow-400 hover:bg-yellow-300 text-slate-950 font-game py-3 px-4 rounded-xl flex-1 transition">
+                    🔄 MAIN LAGI
+                </button>
+                <button onclick="showPage('pageMap')" class="btn-bounce bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3 px-4 rounded-xl flex-1 border border-slate-600 transition">
+                    🗺️ LIHAT PETA
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="w-full bg-slate-900/60 border-t border-slate-800 p-3 text-center text-xs text-slate-500">
+        Game Pembelajaran Bahasa Sunda Kelas VII SMP • Jelajah Negeri Dongeng Sunda
+    </footer>
+
+    <!-- GAME LOGIC SCRIPT -->
+    <script>
+        // --- DATA SOAL & WILAYAH ---
+        const regionsData = [
+            {
+                id: 0,
+                name: "Leuweung Fabel",
+                icon: "🦊",
+                x: 15, y: 70,
+                questions: [
+                    {
+                        id: 1,
+                        q: "Dongéng téh nyaéta...",
+                        options: [
+                            "Carita nyata anu ditulis dumasar kana kajadian sajarah.",
+                            "Carita rékaan anu sumebar sacara turun-tumurun di masarakat.",
+                            "Carita ngeunaan kahirupan sapopoé anu salawasna nyata.",
+                            "Warta ngeunaan kajadian anu keur lumangsung."
+                        ],
+                        correct: 1,
+                        exp: "Dongéng nyaéta carita rékaan (fiktif) anu sumebar sacara lisan tur turun-tumurun di tengah masarakat."
+                    },
+                    {
+                        id: 2,
+                        q: "Dongéng anu palakuna mangrupa sasatoan sarta bisa nyarita kawas manusa disebut...",
+                        options: ["Mitos", "Sage", "Fabel", "Sasakala"],
+                        correct: 2,
+                        exp: "Fabel nyaéta jenis dongéng anu tokoh utamana sato (sasatoan) anu tiasa ngabogaan paripolah kawas manusa."
+                    }
+                ]
+            },
+            {
+                id: 1,
+                name: "Lembur Parabel",
+                icon: "👨‍🌾",
+                x: 35, y: 35,
+                questions: [
+                    {
+                        id: 3,
+                        q: "Dongéng parabel nyaéta dongéng anu eusina...",
+                        options: [
+                            "Nyindiran atawa méré piwuruk ngeunaan kahirupan manusa.",
+                            "Nyaritakeun asal-usul hiji tempat.",
+                            "Nyaritakeun kajadian gaib ngeunaan déwa.",
+                            "Nyaritakeun perjuangan hiji pahlawan."
+                        ],
+                        correct: 0,
+                        exp: "Parabel nyaéta dongéng ngeunaan jalma biasa anu eusina ngandung sindiran, humor, atawa piwuruk kahirupan."
+                    },
+                    {
+                        id: 4,
+                        q: "Salah sahiji tujuan dongéng parabel nyaéta...",
+                        options: [
+                            "Ngahibur bari méré piwuruk.",
+                            "Ngajarkeun cara nyieun barang.",
+                            "Méré béja ngeunaan kajadian ayeuna.",
+                            "Nyaritakeun silsilah kulawarga."
+                        ],
+                        correct: 0,
+                        exp: "Dongéng parabel dipaké ku masarakat pikeun ngahibur sakaligus méré tuladan tur piwuruk moral."
+                    }
+                ]
+            },
+            {
+                id: 2,
+                name: "Situ Sasakala",
+                icon: "🌊",
+                x: 55, y: 75,
+                questions: [
+                    {
+                        id: 5,
+                        q: "Dongéng anu nyaritakeun asal-usul hiji tempat, barang, atawa kajadian disebut...",
+                        options: ["Fabel", "Sasakala", "Parabel", "Sage"],
+                        correct: 1,
+                        exp: "Sasakala (legenda) nyaéta dongéng anu nyaritakeun asal-usul kajadian hiji tempat, barang, atawa tutuwuhan."
+                    },
+                    {
+                        id: 6,
+                        q: "Carita Sangkuriang anu dipercaya minangka asal-usul Gunung Tangkuban Parahu kaasup kana jenis dongéng...",
+                        options: ["Fabel", "Mitos", "Sasakala", "Parabel"],
+                        correct: 2,
+                        exp: "Carita Sangkuriang kaasup Sasakala sabab nyaritakeun asal-usul kawentukna Gunung Tangkuban Parahu."
+                    }
+                ]
+            },
+            {
+                id: 3,
+                name: "Gunung Sage",
+                icon: "🏔️",
+                x: 75, y: 35,
+                questions: [
+                    {
+                        id: 7,
+                        q: "Dongéng sage nyaéta dongéng anu nyaritakeun...",
+                        options: [
+                            "Sasatoan anu bisa nyarita.",
+                            "Kajadian anu aya patalina jeung sajarah atawa kapahlawanan.",
+                            "Asal-usul ngaran hiji tempat.",
+                            "Kajadian ngeunaan déwa jeung mahluk gaib."
+                        ],
+                        correct: 1,
+                        exp: "Sage nyaéta dongéng anu aya patalina jeung unsur sajarah tur nyaritakeun keperkasaan atawa kapahlawanan."
+                    },
+                    {
+                        id: 8,
+                        q: "Salah sahiji ciri dongéng sage nyaéta...",
+                        options: [
+                            "Eusina nyaritakeun kahirupan sasatoan.",
+                            "Eusina ngandung unsur sajarah jeung kapahlawanan.",
+                            "Eusina salawasna nyaritakeun asal-usul tutuwuhan.",
+                            "Eusina ngan saukur nyaritakeun kahirupan sapopoé."
+                        ],
+                        correct: 1,
+                        exp: "Ciri utama dongéng sage nyaéta ayana tokoh pahlawan anu ngabogaan kasaktian sarta patali jeung sajarah."
+                    }
+                ]
+            },
+            {
+                id: 4,
+                name: "Karaton Mitos",
+                icon: "👑",
+                x: 90, y: 65,
+                questions: [
+                    {
+                        id: 9,
+                        q: "Dongéng mitos nyaéta dongéng anu eusina patali jeung...",
+                        options: [
+                            "Kajadian sapopoé anu nyata.",
+                            "Sasatoan anu hirup di leuweung.",
+                            "Kapercayaan masarakat kana hal gaib atawa mahluk supranatural.",
+                            "Kagiatan jual beuli di pasar."
+                        ],
+                        correct: 2,
+                        exp: "Mitos nyaéta dongéng anu patali jeung kapercayaan kana hal-hal gaib, dewa-dewi, atawa roh halus."
+                    },
+                    {
+                        id: 10,
+                        q: "Carita ngeunaan Nyi Roro Kidul anu dipercaya minangka pangawasa Laut Kidul kaasup kana jenis dongéng...",
+                        options: ["Fabel", "Parabel", "Sage", "Mitos"],
+                        correct: 3,
+                        exp: "Carita Nyi Roro Kidul kaasup kana Mitos sabab patali erat jeung kapercayaan gaib masarakat."
+                    }
+                ]
+            }
+        ];
+
+        // --- STATE PERMAINAN ---
+        let playerName = "";
+        let currentRegionIndex = 0;
+        let currentQuestionIndex = 0; // 0 atawa 1 di tiap wilayah
+        let attempts = 1;
+        let score = 0;
+        let correctCount = 0;
+        let wrongCount = 0;
+        let unlockedRegions = 1; // Mulai ti wilayah 1 (index 0)
+        let answeredQuestions = new Set(); // Mencegah duplikasi skor
+
+        // --- WEB AUDIO API (SOUND EFFECTS) ---
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new AudioContext();
+        }
+
+        function playSound(type) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'correct') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+                osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2); // G5
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.4);
+            } else if (type === 'wrong') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(180, audioCtx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            }
+        }
+
+        // --- NAVIGASI HALAMAN ---
+        function showPage(pageId) {
+            ['pageLanding', 'pageMap', 'pageQuiz', 'pageResult'].forEach(id => {
+                const el = document.getElementById(id);
+                if (id === pageId) {
+                    el.classList.remove('hidden');
+                    if (id === 'pageQuiz' || id === 'pageMap') el.classList.add('flex');
+                } else {
+                    el.classList.add('hidden');
+                    el.classList.remove('flex');
+                }
+            });
+
+            if (pageId === 'pageMap') renderMap();
+        }
+
+        // --- START GAME ---
+        function startGame() {
+            const input = document.getElementById('inputPlayerName');
+            const name = input.value.trim();
+            if (!name) {
+                alert("Mangga eusi heula wasta (nama) anjeun!");
+                input.focus();
+                return;
+            }
+            initAudio();
+            playerName = name;
+            document.getElementById('headerPlayerName').innerText = playerName;
+            document.getElementById('playerBadgeHeader').classList.remove('hidden');
+
+            // Reset Game State
+            score = 0;
+            correctCount = 0;
+            wrongCount = 0;
+            unlockedRegions = 1;
+            answeredQuestions.clear();
+            
+            showPage('pageMap');
+        }
+
+        // --- RENDER MAP CANVAS 2D & BUTTONS ---
+        function renderMap() {
+            document.getElementById('mapScore').innerText = score;
+            document.getElementById('mapProgress').innerText = `${unlockedRegions} / 5 Wilayah`;
+
+            const canvas = document.getElementById('mapCanvas');
+            const ctx = canvas.getContext('2d');
+            const container = canvas.parentElement;
+
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+
+            // Background Gradien Alam Fantasi
+            const bgGradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            bgGradient.addColorStop(0, '#0284c7');
+            bgGradient.addColorStop(0.5, '#0d9488');
+            bgGradient.addColorStop(1, '#15803d');
+            ctx.fillStyle = bgGradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Gambar Jalur Hubungan Antar-Wilayah
+            ctx.beginPath();
+            ctx.setLineDash([8, 8]);
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+
+            regionsData.forEach((region, idx) => {
+                const posX = (region.x / 100) * canvas.width;
+                const posY = (region.y / 100) * canvas.height;
+                if (idx === 0) ctx.moveTo(posX, posY);
+                else ctx.lineTo(posX, posY);
+            });
+            ctx.stroke();
+
+            // Render Node Tombol Interaktif
+            const nodesContainer = document.getElementById('mapNodesContainer');
+            nodesContainer.innerHTML = '';
+
+            regionsData.forEach((region, idx) => {
+                const isUnlocked = idx < unlockedRegions;
+                const nodeBtn = document.createElement('button');
+                nodeBtn.className = `absolute transform -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-1 group transition ${isUnlocked ? 'cursor-pointer hover:scale-110' : 'cursor-not-allowed opacity-60'}`;
+                nodeBtn.style.left = `${region.x}%`;
+                nodeBtn.style.top = `${region.y}%`;
+
+                if (isUnlocked) {
+                    nodeBtn.onclick = () => startQuiz(idx);
+                }
+
+                nodeBtn.innerHTML = `
+                    <div class="w-12 h-12 md:w-14 md:h-14 rounded-2xl flex items-center justify-center text-2xl shadow-xl transition border-2 ${
+                        isUnlocked 
+                        ? 'bg-gradient-to-tr from-amber-400 to-yellow-300 border-yellow-100 text-slate-900 shadow-yellow-500/30 animate-pulse' 
+                        : 'bg-slate-800 border-slate-600 text-slate-500'
+                    }">
+                        ${isUnlocked ? region.icon : '🔒'}
+                    </div>
+                    <span class="bg-slate-900/90 border border-slate-700 text-[11px] md:text-xs px-2.5 py-0.5 rounded-full font-bold whitespace-nowrap ${isUnlocked ? 'text-yellow-300' : 'text-slate-400'}">
+                        ${region.name}
+                    </span>
+                `;
+                nodesContainer.appendChild(nodeBtn);
+            });
+        }
+
+        // --- MULAI KUIS DI WILAYAH CERTAIN ---
+        function startQuiz(regionIdx) {
+            currentRegionIndex = regionIdx;
+            currentQuestionIndex = 0;
+            attempts = 1;
+            showQuestion();
+            showPage('pageQuiz');
+        }
+
+        // --- TAMPILKAN SOAL ---
+        function showQuestion() {
+            const region = regionsData[currentRegionIndex];
+            const qData = region.questions[currentQuestionIndex];
+            attempts = 1;
+
+            document.getElementById('quizRegionTitle').innerText = region.name;
+            document.getElementById('quizProgress').innerText = `Soal ${qData.id} ti 10`;
+            document.getElementById('quizScore').innerText = score;
+            document.getElementById('questionText').innerText = qData.q;
+            document.getElementById('attemptBadge').innerText = "Kesempatan Ke-1";
+            document.getElementById('attemptBadge').className = "bg-blue-500/20 text-blue-300 border border-blue-500/30 text-xs px-3 py-1 rounded-full font-semibold";
+
+            // Sembunyikan Pembahasan
+            const feedback = document.getElementById('feedbackContainer');
+            feedback.classList.add('hidden');
+            feedback.classList.remove('flex');
+
+            // Render Options
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+
+            const optionLabels = ['A', 'B', 'C', 'D'];
+            qData.options.forEach((optText, optIdx) => {
+                const btn = document.createElement('button');
+                btn.className = "opt-btn w-full bg-slate-800/90 hover:bg-slate-700 border-2 border-slate-700 hover:border-yellow-400 rounded-xl p-4 text-left font-semibold text-sm md:text-base flex items-start gap-3 transition group";
+                btn.onclick = () => checkAnswer(optIdx, btn);
+                btn.innerHTML = `
+                    <span class="bg-slate-700 group-hover:bg-yellow-400 group-hover:text-slate-950 text-yellow-300 font-bold w-7 h-7 rounded-lg flex items-center justify-center text-xs shrink-0 transition">
+                        ${optionLabels[optIdx]}
+                    </span>
+                    <span class="text-slate-200 group-hover:text-white pt-0.5">${optText}</span>
+                `;
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        // --- CEK JAWABAN ---
+        function checkAnswer(selectedIdx, btnElement) {
+            const region = regionsData[currentRegionIndex];
+            const qData = region.questions[currentQuestionIndex];
+            const allOptBtns = document.querySelectorAll('.opt-btn');
+
+            if (selectedIdx === qData.correct) {
+                // JAWABAN BENAR
+                playSound('correct');
+                btnElement.className = "opt-btn w-full bg-emerald-600/30 border-2 border-emerald-400 rounded-xl p-4 text-left font-semibold text-sm md:text-base flex items-start gap-3 text-emerald-200";
+
+                // Tambah Skor jika belum dijawab
+                if (!answeredQuestions.has(qData.id)) {
+                    score += 100;
+                    correctCount++;
+                    answeredQuestions.add(qData.id);
+                }
+
+                document.getElementById('quizScore').innerText = score;
+                allOptBtns.forEach(b => b.disabled = true);
+                showDiscussion(true, qData.exp);
+
+            } else {
+                // JAWABAN SALAH
+                playSound('wrong');
+                btnElement.className = "opt-btn w-full bg-rose-600/20 border-2 border-rose-500/50 rounded-xl p-4 text-left font-semibold text-sm md:text-base flex items-start gap-3 text-rose-300 opacity-60";
+                btnElement.disabled = true;
+
+                if (attempts === 1) {
+                    // Kesempatan Ke-2
+                    attempts = 2;
+                    document.getElementById('attemptBadge').innerText = "Kesempatan Ke-2 (Terakhir!)";
+                    document.getElementById('attemptBadge').className = "bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs px-3 py-1 rounded-full font-semibold animate-pulse";
+                } else {
+                    // Kesempatan Habis
+                    wrongCount++;
+                    allOptBtns.forEach(b => b.disabled = true);
+                    // Highlight jawaban yang benar
+                    allOptBtns[qData.correct].className = "opt-btn w-full bg-emerald-600/30 border-2 border-emerald-400 rounded-xl p-4 text-left font-semibold text-sm md:text-base flex items-start gap-3 text-emerald-200";
+                    showDiscussion(false, qData.exp);
+                }
+            }
+        }
+
+        // --- TAMPILKAN PEMBAHASAN ---
+        function showDiscussion(isCorrect, explanationText) {
+            const feedback = document.getElementById('feedbackContainer');
+            const feedbackTitle = document.getElementById('feedbackTitle');
+            const discussionText = document.getElementById('discussionText');
+
+            feedback.classList.remove('hidden');
+            feedback.classList.add('flex');
+
+            if (isCorrect) {
+                feedback.className = "flex flex-col gap-3 p-5 rounded-2xl bg-emerald-950/40 border border-emerald-500/40";
+                feedbackTitle.innerHTML = `<span class="text-2xl">🌟</span> <span class="text-emerald-300">Hébat! Jawaban anjeun leres!</span>`;
+            } else {
+                feedback.className = "flex flex-col gap-3 p-5 rounded-2xl bg-rose-950/40 border border-rose-500/40";
+                feedbackTitle.innerHTML = `<span class="text-2xl">💡</span> <span class="text-rose-300">Can leres, hayu urang diajar pembahasanana!</span>`;
+            }
+
+            discussionText.innerText = explanationText;
+
+            // Auto Scroll Halus ke Tombol Selanjutnya
+            setTimeout(() => {
+                feedback.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        }
+
+        // --- LANJUT SOAL BERIKUTNYA ---
+        function nextQuestion() {
+            if (currentQuestionIndex === 0) {
+                // Lanjut ke Soal 2 di Wilayah yang Sama
+                currentQuestionIndex = 1;
+                showQuestion();
+            } else {
+                // Selesai 2 soal di wilayah ini
+                if (currentRegionIndex + 1 < regionsData.length) {
+                    // Buka wilayah berikutnya
+                    if (unlockedRegions <= currentRegionIndex + 1) {
+                        unlockedRegions = currentRegionIndex + 2;
+                    }
+                    showPage('pageMap');
+                } else {
+                    // Selesai Semua 10 Soal -> Ke Halaman Hasil
+                    showResult();
+                }
+            }
+        }
+
+        // --- TAMPILKAN HASIL AKHIR ---
+        function showResult() {
+            document.getElementById('resultPlayerName').innerText = playerName;
+            document.getElementById('resScore').innerText = score;
+            document.getElementById('resCorrect').innerText = correctCount;
+            document.getElementById('resWrong').innerText = wrongCount;
+            document.getElementById('resPercent').innerText = `${Math.round((score / 1000) * 100)}%`;
+
+            // Penentuan Gelar Hadiah Virtual
+            let title = "";
+            if (score >= 900) title = "🥇 PENJELAJAH DONGENG UTAMA";
+            else if (score >= 700) title = "🥈 PAHLAWAN NEGERI DONGENG";
+            else if (score >= 500) title = "🥉 PENJELAJAH HEBAT";
+            else if (score >= 300) title = "📜 PETUALANG PEMULA";
+            else title = "🌱 CALON AHLI DONGENG";
+
+            document.getElementById('resultTitle').innerText = title;
+            showPage('pageResult');
+        }
+
+        // --- RESTART GAME ---
+        function restartGame() {
+            score = 0;
+            correctCount = 0;
+            wrongCount = 0;
+            unlockedRegions = 1;
+            answeredQuestions.clear();
+            showPage('pageMap');
+        }
+
+        // Redraw canvas on window resize
+        window.addEventListener('resize', () => {
+            if (!document.getElementById('pageMap').classList.contains('hidden')) {
+                renderMap();
+            }
+        });
+    </script>
+</body>
+</html>
