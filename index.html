@@ -19,7 +19,9 @@
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             user-select: none;
+            /* Perbaikan: izinkan scroll vertical agar tidak terpotong pada layar HP/laptop kecil */
             overflow-x: hidden;
+            overflow-y: auto;
             background: #0f172a;
             color: #f8fafc;
         }
@@ -281,7 +283,8 @@
         </section>
 
         <!-- 3. HALAMAN PERTANYAAN (QUIZ) -->
-        <section id="screenQuiz" class="w-full min-h-screen flex flex-col justify-between p-4 hidden relative">
+        <!-- Perbaikan: ubah min-h-screen dan overflow agar area kuis bisa di-scroll dengan nyaman -->
+        <section id="screenQuiz" class="w-full min-h-screen flex flex-col justify-between p-4 hidden relative overflow-y-auto">
             <!-- Quiz Header -->
             <header class="w-full max-w-4xl mx-auto glass-panel p-4 rounded-2xl flex justify-between items-center z-20">
                 <div class="flex items-center gap-3">
@@ -879,18 +882,22 @@
                     };
 
                     // Highlight opsi yang seharusnya benar
-                    optionBtns[q.correctIndex].classList.remove('border-slate-700/80');
-                    optionBtns[q.correctIndex].classList.add('border-emerald-500', 'bg-emerald-950/30');
+                optionBtns[q.correctIndex].classList.remove('border-slate-700/80');
+                optionBtns[q.correctIndex].classList.add('border-emerald-500', 'bg-emerald-950/30');
 
-                    feedbackBox.className = "p-4 rounded-2xl mb-4 border bg-rose-950/40 border-rose-500/40 text-rose-200 block";
-                    feedbackIcon.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-400"></i>`;
-                    feedbackTitle.textContent = "Kesempatan Parantos Rengse.";
-                    feedbackText.innerHTML = `<strong>Jawaban anu leres nyaéta pilihan ${['A','B','C','D'][q.correctIndex]}.</strong><br><strong>Pembahasan:</strong> ${q.explanation}`;
+                feedbackBox.className = "p-4 rounded-2xl mb-4 border bg-rose-950/40 border-rose-500/40 text-rose-200 block";
+                feedbackIcon.innerHTML = `<i class="fa-solid fa-circle-xmark text-rose-400"></i>`;
+                feedbackTitle.textContent = "Kesempatan Parantos Rengse.";
+                feedbackText.innerHTML = `<strong>Jawaban anu leres nyaéta pilihan ${['A','B','C','D'][q.correctIndex]}.</strong><br><strong>Pembahasan:</strong> ${q.explanation}`;
 
-                    optionBtns.forEach(btn => btn.disabled = true);
-                    btnNext.classList.remove('hidden');
-                }
+                optionBtns.forEach(btn => btn.disabled = true);
+                btnNext.classList.remove('hidden');
             }
+
+            // Perbaikan Tambahan: Auto-scroll otomatis ke tombol Next & Feedback agar langsung terlihat oleh pemain
+            setTimeout(() => {
+                btnNext.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }, 100);
         }
 
         function nextQuestion() {
